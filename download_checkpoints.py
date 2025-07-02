@@ -15,6 +15,8 @@ from huggingface_hub import hf_hub_download, snapshot_download
 os.makedirs("loras", exist_ok=True)
 os.makedirs("checkpoints", exist_ok=True)
 
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
 LORA_NAMES = [
     "XSArchi_110plan彩总.safetensors",
     "XSArchi_137.safetensors",
@@ -64,8 +66,8 @@ def get_pipeline():
         pipe.scheduler.config
     )
 
-    pipe.enable_xformers_memory_efficient_attention()
-    pipe = pipe.to("cuda")
+    # pipe.enable_xformers_memory_efficient_attention()
+    # pipe = pipe.to(DEVICE)
     AutoImageProcessor.from_pretrained(
         "nvidia/segformer-b5-finetuned-ade-640-640"
     )
