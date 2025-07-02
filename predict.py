@@ -42,7 +42,7 @@ def filter_items(
         if item not in items_to_remove:
             filtered_colors.append(color)
             filtered_items.append(item)
-            
+
     return filtered_colors, filtered_items
 
 
@@ -232,9 +232,9 @@ class Predictor(BasePredictor):
         out_img = generated_image.resize(
             (orig_w, orig_h), Image.Resampling.LANCZOS
         )
-        
+
         out_img = out_img.convert("RGB")
         out_path = "out.png"
         out_img.save(out_path)
-        
+
         return Path(out_path)
