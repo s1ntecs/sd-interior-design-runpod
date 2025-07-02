@@ -114,7 +114,6 @@ seg_image_processor = AutoImageProcessor.from_pretrained(
 image_segmentor = SegformerForSemanticSegmentation.from_pretrained(
     "nvidia/segformer-b5-finetuned-ade-640-640"
 )
-image_segmentor.to(DEVICE)
 mlsd_processor = MLSDdetector.from_pretrained("lllyasviel/Annotators")
 
 
@@ -139,7 +138,6 @@ def segment_image(image):
             on its identified class.
     """
     pixel_values = seg_image_processor(image, return_tensors="pt").pixel_values
-    pixel_values = pixel_values.to(DEVICE)
     with torch.no_grad():
         outputs = image_segmentor(pixel_values)
 
