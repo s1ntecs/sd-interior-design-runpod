@@ -26,10 +26,10 @@ from runpod.serverless.modules.rp_logger import RunPodLogger
 MAX_SEED: int = np.iinfo(np.int32).max
 DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
 DTYPE: torch.dtype = torch.float16 if DEVICE == "cuda" else torch.float32
-MAX_STEPS: int = 125
+MAX_STEPS: int = 150
 
 LORA_DIR = "./loras"
-LORA_LIST = [
+LORA_NAMES = [
     "XSArchi_110plan彩总.safetensors",
     "XSArchi_137.safetensors",
     "XSArchi_141.safetensors",
@@ -42,9 +42,47 @@ LORA_LIST = [
     "xsarchitectural-19Houseplan (1).safetensors",
     "xsarchitectural-19Houseplan.safetensors",
     "xsarchitectural-7.safetensors",
+    "Justin_Modern_interior_design_lora.safetensors",
+    "LAVA_interior_design_lora.safetensors",
+    "Oriental_interior_design_lora.safetensors",
+    "Wooden_interior_design_lora.safetensors",
+    "YAZI_interior_design_lora.safetensors",
+    "archikitty_interior_design_lora.safetensors",
+    "astra_modern_interior_design_lora.safetensors",
+    "bedroom_interior_design_lora.safetensors",
+    "children_interior_design_lora.safetensors",
+    "children_room_interior_design_lora.safetensors",
+    "cozy_interior_design_lora.safetensors",
+    "cream_style_interior_design_lora.safetensors",
+    "cyberpunk _interior_design_lora.safetensors",
+    "dark_brown_interior_design_lora.safetensors",
+    "dark_style_interior_design_lora.safetensors",
+    "decoration _interior_design_lora.safetensors",
+    "french_classic_interior_design_lora.safetensors",
+    "french_interior_design_lora.safetensors",
+    "futuristic_interior_design_lora.safetensors",
+    "gothic _interior_design_lora.safetensors",
+    "grey_interior_design_lora.safetensors",
+    "indian_interior_design_lora.safetensors",
+    "interior_design_lora.safetensors",
+    "interior_design_lora_v2.safetensors",
+    "japanes_interior_design_lora.safetensors",
+    "justin_dark_interior_design_lora.safetensors",
+    "luxury_Light_style_interior_design_lora.safetensors",
+    "mid_century_interior_design_lora.safetensors",
+    "minimalist_interior_design_lora.safetensors",
+    "modern_interior_design_lora.safetensors",
+    "neoclassic_interior_design_lora.safetensors",
+    "neoclassic_wood_interior_design_lora.safetensors",
+    "nordic_lux_interior_design_lora.safetensors",
+    "retro_interior_design_lora.safetensors",
+    "retrofuturistic_interior_design_lora.safetensors",
+    "scandinavian_interior_design_lora.safetensors",
+    "sunroom_interior_design_lora.safetensors",
+    "tropical_brutalism_interior_design_lora.safetensors",
+    "woven_interior_design_lora.safetensors"
 ]
 
-DEFAULT_MODEL = "checkpoints/xsarchitectural_v11.ckpt"
 logger = RunPodLogger()
 
 
@@ -263,7 +301,7 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
         guidance_scale = float(payload.get("guidance_scale", 7.5))
         prompt_strength = float(payload.get("prompt_strength", 0.8))
         steps = min(int(payload.get("steps", MAX_STEPS)), MAX_STEPS)
-        
+
         DEFAULT_SEED = random.randint(0, MAX_SEED)
         seed = int(payload.get("seed", DEFAULT_SEED))
         generator = torch.Generator(device=DEVICE).manual_seed(seed)
@@ -280,7 +318,6 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
         new_width, new_height = resize_dimensions(image.size, 768)
         input_image = image.resize((new_width, new_height))
 
-        # preprocess for segmentation controlnet
         # preprocess for segmentation controlnet
         real_seg = np.array(
             segment_image(input_image)
