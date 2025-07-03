@@ -7,8 +7,8 @@ from typing import Any, Dict, Tuple, Union, List, Optional
 import numpy as np
 import torch
 from PIL import Image
-from diffusers import ControlNetModel
-from diffusers.pipelines.controlnet import StableDiffusionControlNetInpaintPipeline
+from diffusers.pipelines.controlnet import \
+    StableDiffusionControlNetInpaintPipeline
 from diffusers import ControlNetModel, UniPCMultistepScheduler
 from controlnet_aux import MLSDdetector
 from transformers import AutoImageProcessor, SegformerForSemanticSegmentation
@@ -29,7 +29,7 @@ DTYPE: torch.dtype = torch.float16 if DEVICE == "cuda" else torch.float32
 MAX_STEPS: int = 150
 
 LORA_DIR = "./loras"
-LORA_NAMES = [
+LORA_LIST = [
     "XSArchi_110plan彩总.safetensors",
     "XSArchi_137.safetensors",
     "XSArchi_141.safetensors",
@@ -248,7 +248,8 @@ def _switch_lora(lora_name: Optional[str]) -> Optional[str]:
             if hasattr(PIPELINE, "unload_lora_weights"):
                 PIPELINE.unload_lora_weights()
 
-        PIPELINE.load_lora_weights(f"{LORA_DIR}/{lora_name}", use_peft_backend=True)
+        PIPELINE.load_lora_weights(f"{LORA_DIR}/{lora_name}",
+                                   use_peft_backend=True)
         if hasattr(PIPELINE, "fuse_lora"):
             PIPELINE.fuse_lora()
 
